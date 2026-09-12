@@ -1,198 +1,311 @@
-# Movie Industry Analytics
+# Movie Industry Analytics — Dataiku & Power BI
 
-Projet personnel d'analyse de données visant à étudier les principaux facteurs associés à la performance commerciale des films.
+Personal data analysis project exploring the factors associated with movie commercial performance.
 
-**Outils :** Dataiku | Power BI | DAX | Data Quality | Data Visualization
-
----
-
-## 1. Présentation du projet
-
-L'objectif de ce projet est d'analyser les données de l'industrie cinématographique afin d'identifier les principaux facteurs associés à la performance commerciale des films.
-
-L'analyse cherche principalement à répondre à la problématique suivante :
-
-> **Quels facteurs sont associés à la performance commerciale des films, et quelles caractéristiques distinguent les plus grands succès au box-office ?**
-
-Le projet couvre l'ensemble du processus d'analyse, depuis la préparation et la fiabilisation des données dans Dataiku jusqu'à leur analyse et leur visualisation dans Power BI.
-
-L'objectif est d'identifier des associations présentes dans les données et non d'établir des relations de causalité.
+**Tools:** Dataiku | Power BI | DAX  
+**Methods:** Data Cleaning | Data Quality | KPI Analysis | Median Analysis | Pearson Correlation | Data Visualization
 
 ---
 
-## 2. Jeu de données
+## 1. Project Overview
 
-Le projet utilise le jeu de données public **Movie Industry**, disponible sur Kaggle.
+Movie success depends on many factors: budget, genre, release strategy, marketing, distribution, franchises or audience interest.
 
-Le dataset initial contient **7 668 films et 15 variables**, couvrant la période de **1980 à 2020**.
+This project focuses on the factors that can be measured with the available data.
 
-Il contient notamment des informations sur :
+The analysis addresses the following questions:
 
-- le titre et le genre du film ;
-- l'année et la date de sortie ;
-- le budget et les recettes au box-office ;
-- le score et le nombre de votes ;
-- le réalisateur, l'acteur principal et la société de production ;
-- le pays et la durée du film.
+- Which genres generate the highest box-office revenue?
+- Is a higher budget associated with higher revenue?
+- Are audience scores associated with commercial success?
+- Is the number of votes associated with box-office performance?
+- Is movie runtime associated with revenue?
+- Which production companies show the highest median revenue?
+- Which movies generate the highest profit and ROI?
+- Is profitability different across genres?
+- Is release month associated with commercial performance?
+- How have budgets and revenues evolved over time?
+- Are there differences in budget and profitability across countries?
 
-Le jeu de données contient plusieurs valeurs manquantes ainsi que des variables nécessitant une préparation avant de pouvoir être utilisées pour l'analyse.
-
----
-
-## 3. Préparation des données avec Dataiku
-
-La préparation et les contrôles de qualité des données ont été réalisés avec **Dataiku**.
-
-L'objectif était de transformer les données brutes en un dataset propre et structuré, prêt à être exploité dans Power BI.
-
-Les principales étapes de préparation ont été :
-
-- analyse des valeurs manquantes ;
-- recherche de doublons ;
-- vérification et conversion des types de données ;
-- extraction de la date, du pays et du mois de sortie ;
-- création d'un indicateur de **profit** à partir des recettes et du budget ;
-- calcul du **retour sur investissement (ROI)** ;
-- création de catégories de rentabilité ;
-- contrôles de cohérence et de qualité des données.
-
-Les budgets manquants n'ont pas été artificiellement remplacés afin de ne pas introduire d'hypothèses supplémentaires dans l'analyse financière.
-
-### Flow Dataiku
-
-Le Flow final permet de visualiser les différentes étapes de préparation, de transformation et d'analyse des données.
-
-![Flow Dataiku](images/dataiku-flow.png)
-
-### Préparation des données
-
-La recette Prepare a permis de nettoyer, transformer et enrichir le dataset initial avant son export vers Power BI.
-
-![Préparation Dataiku](images/dataiku-preparation.png)
+The objective is to identify patterns and associations, not causal relationships.
 
 ---
 
-## 4. Analyse et visualisation avec Power BI
+## 2. Dataset
 
-Le dataset nettoyé dans Dataiku a ensuite été exporté et analysé dans **Power BI**.
+The project uses the public **Movie Industry** dataset available on Kaggle.
 
-Plusieurs mesures et colonnes calculées en DAX ont été créées afin d'analyser notamment :
+The original dataset contains:
 
-- les recettes au box-office ;
-- le budget ;
-- le profit ;
-- le ROI ;
-- la proportion de films rentables ;
-- le score moyen ;
-- les corrélations entre la performance commerciale et différentes caractéristiques des films.
+- **7,668 movies**
+- **15 variables**
+- Movies released between **1980 and 2020**
 
-Les médianes ont principalement été utilisées pour les indicateurs financiers afin de limiter l'influence des valeurs extrêmes présentes dans les distributions.
+Available information includes movie title, genre, release information, budget, gross revenue, audience score, number of votes, director, writer, main actor, production company, country and runtime.
 
-Le dashboard est organisé en trois pages complémentaires.
+The raw dataset contains missing values and variables that require cleaning and transformation before analysis.
 
-### Page 1 — Vue d'ensemble et tendances
+---
 
-La première page présente une vue générale du marché et de son évolution entre **1980 et 2019**.
+## 3. Data Preparation with Dataiku
 
-Elle comprend notamment :
+Data preparation and quality checks were performed in **Dataiku**.
 
-- les principaux indicateurs de performance ;
-- l'évolution du budget et des recettes médianes ;
-- une comparaison du budget et des recettes selon le genre ;
-- des filtres par année et par genre.
+The goal was to produce a clean and structured dataset for the Power BI analysis.
 
-L'année 2020 a été exclue de l'analyse temporelle car le dataset ne contient qu'un nombre limité de films pour cette année.
+### 3.1 Data Quality
+
+The main checks included:
+
+- Analyzed missing values.
+- Checked duplicate records.
+- Validated data types.
+- Checked data consistency.
+- Inspected financial variables and extreme values.
+
+No duplicate movie was identified using the combination of **title, year and director**.
+
+Budget is the main incomplete financial variable, with approximately **28% missing values**.
+
+Missing budgets were not imputed. This avoids introducing estimated values into the profitability analysis.
+
+### 3.2 Data Transformation
+
+The main transformations included:
+
+- Converted `votes` from decimal to integer.
+- Separated information contained in the original `released` field.
+- Created `released_date`.
+- Extracted `released_country`.
+- Extracted `release_month` for seasonality analysis.
+- Created `profit`.
+- Created `ROI`.
+- Created profitability categories.
+
+Profit was calculated as:
+
+`Profit = Gross Revenue - Budget`
+
+ROI was calculated as:
+
+`ROI = Profit / Budget`
+
+**Profit** measures the absolute financial gain of a movie.
+
+**ROI** measures the return relative to its production budget.
+
+### 3.3 Dataiku Flow
+
+The final Flow combines the preparation, quality checks and analytical steps.
+
+![Dataiku Flow](images/dataiku-flow.png)
+
+### 3.4 Prepare Recipe
+
+The Prepare recipe contains the main cleaning and transformation operations applied to the raw dataset.
+
+![Dataiku Preparation](images/dataiku-preparation.png)
+
+The final dataset contains **7,668 rows and 21 variables**.
+
+It was then exported to Power BI.
+
+---
+
+## 4. Analysis and Visualization with Power BI
+
+The cleaned dataset was imported into **Power BI** for analysis and visualization.
+
+DAX measures and calculated columns were created for:
+
+- Number of movies
+- Median box-office revenue
+- Median budget
+- Median profit
+- Median ROI
+- Percentage of profitable movies
+- Average audience score
+- Correlation indicators
+
+Median values were mainly used for financial analysis.
+
+Budgets, revenues and profits contain large differences between small productions and major blockbusters. The median reduces the influence of these extreme values.
+
+The dashboard contains three pages.
+
+### 4.1 Overview & Trends
+
+The first page provides an overview of the movie market between **1980 and 2019**.
+
+It covers:
+
+- Main KPIs
+- Evolution of median box-office revenue
+- Evolution of median production budget
+- Budget and revenue by genre
+- Year and genre filtering
 
 ![Power BI Overview](images/powerbi-overview.png)
 
-### Page 2 — Facteurs associés au succès
+Both median budgets and revenues increase over the period covered by the dataset.
 
-La deuxième page analyse les différents facteurs associés aux recettes au box-office.
+Clear differences also appear between genres.
 
-Des nuages de points et des corrélations de Pearson ont été utilisés afin d'étudier les relations entre les recettes et :
+The year **2020 was excluded from the time analysis** because the dataset contains only a small and incomplete sample for that year.
 
-- le budget ;
-- le nombre de votes ;
-- le score des spectateurs ;
-- la durée du film.
+Financial values are not adjusted for inflation. Long-term financial trends should therefore be interpreted carefully.
 
-Des analyses complémentaires permettent également de comparer les recettes selon les sociétés de production et les classifications des films.
+---
+
+### 4.2 Success Drivers
+
+The second page explores the variables associated with box-office revenue.
+
+Four relationships were tested:
+
+- Budget vs. box-office revenue
+- Number of votes vs. box-office revenue
+- Audience score vs. box-office revenue
+- Runtime vs. box-office revenue
+
+Scatter plots and linear trend lines were used to visualize these relationships.
+
+The **Pearson correlation coefficient** was calculated to measure their linear strength.
+
+Pearson's coefficient ranges from **-1 to +1**:
+
+- Close to **+1**: strong positive relationship
+- Close to **0**: weak linear relationship
+- Close to **-1**: strong negative relationship
+
+| Relationship | Pearson correlation |
+|---|---:|
+| Budget / Box-office | **0.74** |
+| Votes / Box-office | **0.63** |
+| Runtime / Box-office | **0.25** |
+| Audience Score / Box-office | **0.19** |
 
 ![Power BI Success Drivers](images/powerbi-success-drivers.png)
 
-### Page 3 — Rentabilité et analyse du marché
+**Budget has the strongest association with box-office revenue (r = 0.74).** Higher-budget movies tend to generate higher revenues in this dataset.
 
-La troisième page se concentre sur la rentabilité des films et certaines caractéristiques du marché.
+**Number of votes also shows a clear positive association (r = 0.63).** However, votes can also reflect the visibility and popularity generated by a successful movie.
 
-Elle comprend notamment :
+**Audience score shows a weak association with revenue (r = 0.19).** A highly rated movie is not necessarily a major commercial success.
 
-- le profit médian et le ROI médian ;
-- la proportion de films rentables ;
-- les films générant les profits les plus élevés ;
-- les films présentant les ROI les plus élevés ;
-- la rentabilité selon le genre ;
-- les performances selon le mois de sortie ;
-- l'évolution du budget et du profit selon le mois de sortie ;
-- des comparaisons de budget et de ROI entre différents pays.
+**Runtime also shows a weak association with revenue (r = 0.25).** Movie duration alone is therefore not strongly related to box-office performance.
 
-Des seuils minimums de nombre de films ont été appliqués pour certaines analyses par genre et par pays afin d'éviter de tirer des conclusions à partir d'échantillons trop faibles.
+Median revenue was also compared across production companies and movie ratings.
+
+---
+
+### 4.3 Profitability & Market Insights
+
+The third page focuses on **profitability rather than revenue alone**.
 
 ![Power BI Profitability](images/powerbi-profitability.png)
 
+Main indicators:
+
+- **Median profit: $13.77M**
+- **Median ROI: 80.72%**
+- **Profitable movies: 67.77%**
+
+Around two thirds of movies with sufficient financial data generated a positive profit.
+
+Profit and ROI provide two different views of performance.
+
+**Profit** identifies movies with the largest absolute financial gains.
+
+**ROI** identifies movies with the largest return relative to their production budget.
+
+A high-budget blockbuster can therefore generate a very large profit without having the highest ROI.
+
+A low-budget movie can generate a very high ROI with a much smaller absolute profit.
+
+Additional analyses include:
+
+- Ranked movies by profit and ROI.
+- Compared median profit and ROI across genres.
+- Analyzed median box-office revenue by release month.
+- Compared median budget and profit by release month.
+- Compared median budget and ROI across production countries.
+
+Minimum sample-size thresholds were applied to some genre and country comparisons. This reduces the impact of categories represented by only a few movies.
+
+Animation shows a high median profit in the analyzed sample.
+
+Animation and Horror also show high median ROI levels.
+
+Median box-office revenue is particularly high in **June and December**, suggesting a seasonal pattern in the dataset.
+
+Country results require more caution because the number of movies varies significantly between countries.
+
 ---
 
-## 5. Principaux résultats
+## 5. Key Findings
 
-Plusieurs résultats ressortent de l'analyse :
+- **Budget shows the strongest association with box-office revenue (r = 0.74).**
+- **Number of votes also shows a clear association with revenue (r = 0.63).**
+- **Audience score is only weakly associated with revenue (r = 0.19).**
+- **Runtime is also weakly associated with revenue (r = 0.25).**
+- Approximately **67.8% of movies** with sufficient financial data are profitable.
+- High profit and high ROI represent different types of commercial performance.
+- Animation and Horror show strong profitability indicators in the analyzed sample.
+- June and December show particularly high median box-office revenues.
+- Commercial performance cannot be explained by a single variable.
 
-- Le **budget et les recettes présentent une forte association positive (r = 0,74)**.
-- Le **nombre de votes et les recettes sont également positivement associés (r = 0,63)**.
-- Le score des spectateurs présente une association beaucoup plus faible avec les recettes (**r = 0,19**).
-- La durée du film présente également une association faible avec les recettes (**r = 0,25**).
-- Environ **67,8 % des films** disposant des données financières nécessaires sont rentables.
-- Les genres Animation et Horreur présentent des ROI médians élevés au sein de l'échantillon analysé.
-- Juin et décembre ressortent comme des périodes particulièrement fortes en termes de recettes médianes.
+Budget is the strongest numerical factor tested in this analysis.
 
-Ces résultats représentent les tendances observées dans le dataset et ne doivent pas être interprétés comme des relations de causalité.
-
----
-
-## 6. Limites de l'analyse
-
-Cette analyse présente plusieurs limites :
-
-- le dataset ne représente pas de manière exhaustive tous les films sortis entre 1980 et 2020 ;
-- les données disponibles pour 2020 sont incomplètes ;
-- les informations de budget sont manquantes pour environ **28 % des films** ;
-- les montants financiers sont exprimés en dollars nominaux et ne sont pas corrigés de l'inflation ;
-- le nombre de films varie fortement selon les pays, les genres et les sociétés de production ;
-- le nombre de votes peut refléter la popularité et la visibilité d'un film autant que l'engagement des spectateurs ;
-- une corrélation ne démontre pas une relation de causalité.
+Other factors such as marketing, franchise strength, distribution strategy or star power may also influence movie success. These variables are not available in the dataset and were therefore not measured.
 
 ---
 
-## 7. Outils et compétences
+## 6. Limitations
 
-### Outils
+- The dataset is not an exhaustive list of all movies released between 1980 and 2020.
+- The 2020 sample is incomplete.
+- Approximately **28% of budget values are missing**.
+- Financial values are not adjusted for inflation.
+- Sample sizes vary significantly across genres, countries and production companies.
+- Number of votes can reflect visibility and popularity as well as audience engagement.
+- Marketing expenditure is not available.
+- Distribution scale is not available.
+- Franchise information is not directly available.
+- Correlation identifies an association, **not causation**.
 
-- **Dataiku** — préparation, transformation et contrôle de la qualité des données
-- **Power BI** — analyse et visualisation des données
-- **DAX** — création de mesures, colonnes calculées et indicateurs
+---
 
-### Compétences mises en œuvre
+## 7. Tools & Skills
 
-- Préparation des données
-- Nettoyage et transformation
-- Data Quality
-- Analyse exploratoire
-- Création de KPI
-- Analyse de corrélations
+**Tools**
+
+- Dataiku
+- Power BI
 - DAX
+
+**Data preparation**
+
+- Data Cleaning
+- Data Quality
+- Missing Value Analysis
+- Duplicate Detection
+- Data Transformation
+- Feature Creation
+
+**Data analysis**
+
+- Exploratory Data Analysis
+- KPI Analysis
+- Median Analysis
+- Profitability Analysis
+- Pearson Correlation
+- Trend Analysis
+- Segmentation
 - Data Visualization
-- Interprétation des résultats
 
 ---
 
-## Workflow du projet
+## 8. Project Workflow
 
-**Données brutes → Dataiku → Data Quality & Transformation → Dataset nettoyé → Power BI → Analyse & Insights**
+**Raw Data → Data Quality → Dataiku Preparation → Feature Creation → Clean Dataset → Power BI → DAX & Statistical Analysis → Dashboard → Insights**
